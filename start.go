@@ -20,13 +20,18 @@ func (w WatchFiles) DevFileWatcherSTART() {
 	defer watcher.Close()
 
 	go w.watchEvents(watcher)
-
+	reg := map[string]struct{}{}
 	for _, folder := range w.DIRECTORY_FOLDERS {
 
 		filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() && !contain(path) {
+			if info.IsDir() && !w.Contain(path) {
+				if _, exist := reg[path]; !exist {
+
+					watcher.Add(path)
+
+					reg[path] = struct{}{}
+				}
 				// fmt.Println(path)
-				watcher.Add(path)
 			}
 			return nil
 		})
