@@ -10,7 +10,7 @@ import (
 
 // La función principal es donde se crea el observador para monitorear los cambios en los archivos y directorios.
 // En esta función, también configuraremos los filtros para los tipos de archivo que queremos observar.
-func (u ui) DevFileWatcherSTART() {
+func (w WatchFiles) DevFileWatcherSTART() {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -19,9 +19,9 @@ func (u ui) DevFileWatcherSTART() {
 	}
 	defer watcher.Close()
 
-	go u.watchEvents(watcher)
+	go w.watchEvents(watcher)
 
-	for _, folder := range u.directory_folders {
+	for _, folder := range w.DIRECTORY_FOLDERS {
 
 		filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
 			if info.IsDir() && !contain(path) {

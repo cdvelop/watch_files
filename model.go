@@ -1,7 +1,7 @@
 package watch_files
 
-type ui struct {
-	directory_folders []string // ej: "modules", "ui\\theme"
+type WatchFiles struct {
+	DIRECTORY_FOLDERS []string // ej: "modules", "ui\\theme"
 	compiler
 }
 

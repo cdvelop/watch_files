@@ -1,11 +1,11 @@
 package watch_files
 
-func Add(c compiler, directory_folder_to_watch ...string) *ui {
+func Add(c compiler, directory_folder_to_watch ...string) *WatchFiles {
 
-	u := ui{
-		directory_folders: directory_folder_to_watch,
+	w := WatchFiles{
+		DIRECTORY_FOLDERS: directory_folder_to_watch,
 		compiler:          c,
 	}
 
-	return &u
+	return &w
 }

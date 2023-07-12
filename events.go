@@ -10,7 +10,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func (u ui) watchEvents(watcher *fsnotify.Watcher) {
+func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 	// defer wg.Done()
 	last_actions := make(map[string]time.Time)
 	for {
@@ -34,24 +34,24 @@ func (u ui) watchEvents(watcher *fsnotify.Watcher) {
 					switch extension {
 					case ".css":
 						fmt.Println("Compilando CSS...", event.Name)
-						u.BuildCSS()
+						w.BuildCSS()
 						// RELOADED HERE
 						showMessage("reload_browser")
 					case ".js":
 						fmt.Println("Compilando JS...", event.Name)
-						u.BuildJS()
+						w.BuildJS()
 						// RELOADED HERE
 						showMessage("reload_browser")
 					case ".html":
 						fmt.Println("Compilando HTML...", event.Name)
-						u.BuildHTML()
+						w.BuildHTML()
 						// RELOADED HERE
 						showMessage("reload_browser")
 					case ".go":
 
 						if strings.Contains(event.Name, "wasm") {
 							fmt.Println("Compilando WASM...", event.Name)
-							u.BuildWASM()
+							w.BuildWASM()
 							// RELOADED HERE
 
 							showMessage("reload_browser")
