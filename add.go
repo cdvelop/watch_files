@@ -1,10 +1,12 @@
 package watch_files
 
-func Add(c compiler, directory_folder_to_watch ...string) *WatchFiles {
+func Add(c compiler, d reload, t restart, directory_folder_to_watch ...string) *WatchFiles {
 
 	w := WatchFiles{
-		DIRECTORY_FOLDERS: directory_folder_to_watch,
+		watch_dir_folders: directory_folder_to_watch,
 		compiler:          c,
+		reload:            d,
+		restart:           t,
 	}
 
 	return &w

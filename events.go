@@ -2,7 +2,7 @@ package watch_files
 
 import (
 	"fmt"
-	"os"
+	"log"
 	"path/filepath"
 	"strings"
 	"time"
@@ -34,31 +34,50 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 					switch extension {
 					case ".css":
 						fmt.Println("Compilando CSS...", event.Name)
-						w.BuildCSS()
-						// RELOADED HERE
-						showMessage("reload_browser")
+						err := w.BuildCSS()
+						if err != nil {
+							log.Println(err)
+						} else {
+							w.Reload()
+						}
 					case ".js":
 						fmt.Println("Compilando JS...", event.Name)
-						w.BuildJS()
-						// RELOADED HERE
-						showMessage("reload_browser")
+						err := w.BuildJS()
+						if err != nil {
+							log.Println(err)
+						} else {
+							w.Reload()
+						}
+
 					case ".html":
 						fmt.Println("Compilando HTML...", event.Name)
-						w.BuildHTML()
-						// RELOADED HERE
-						showMessage("reload_browser")
+						err := w.BuildHTML()
+						if err != nil {
+							log.Println(err)
+						} else {
+							w.Reload()
+						}
+
 					case ".go":
 
 						if strings.Contains(event.Name, "wasm") {
 							fmt.Println("Compilando WASM...", event.Name)
-							w.BuildWASM()
-							// RELOADED HERE
-
-							showMessage("reload_browser")
+							err := w.BuildWASM()
+							if err != nil {
+								log.Println(err)
+							} else {
+								w.Reload()
+							}
 						} else {
-							showMessage("restart_app")
-							time.Sleep(10 * time.Millisecond)
-							os.Exit(0)
+
+							err := w.Restart()
+							if err != nil {
+								log.Println("Restart error: ", err)
+							}
+
+							// showMessage("restart_app")
+							// time.Sleep(10 * time.Millisecond)
+							// os.Exit(0)
 
 						}
 

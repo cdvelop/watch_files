@@ -1,13 +1,23 @@
 package watch_files
 
 type WatchFiles struct {
-	DIRECTORY_FOLDERS []string // ej: "modules", "ui\\theme"
+	watch_dir_folders []string // ej: "modules", "ui\\theme"
 	compiler
+	reload
+	restart
 }
 
 type compiler interface {
-	BuildHTML()
-	BuildCSS()
-	BuildJS()
-	BuildWASM()
+	BuildHTML() error
+	BuildCSS() error
+	BuildJS() error
+	BuildWASM() error
+}
+
+type reload interface {
+	Reload()
+}
+
+type restart interface {
+	Restart() error
 }
