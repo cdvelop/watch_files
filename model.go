@@ -1,7 +1,7 @@
 package watch_files
 
 type WatchFiles struct {
-	watch_dir_folders []string // ej: "modules", "ui\\theme"
+	watch_dir_folders map[string]struct{} // ej: "modules", "ui\\theme"
 	compiler
 	reload
 	restart
