@@ -20,7 +20,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 				return
 			}
 
-			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 2*time.Second {
+			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 3*time.Second {
 				// Registrar la última acción y procesar el evento.
 				last_actions[event.Name] = time.Now()
 
