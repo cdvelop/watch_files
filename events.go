@@ -34,43 +34,43 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 					switch extension {
 					case ".css":
 						fmt.Println("Compilando CSS...", event.Name)
-						err := w.BuildCSS()
+						err := action.BuildCSS()
 						if err != nil {
 							log.Println(err)
 						} else {
-							w.Reload()
+							log.Println(action.Reload())
 						}
 					case ".js":
 						fmt.Println("Compilando JS...", event.Name)
-						err := w.BuildJS()
+						err := action.BuildJS()
 						if err != nil {
 							log.Println(err)
 						} else {
-							w.Reload()
+							log.Println(action.Reload())
 						}
 
 					case ".html":
 						fmt.Println("Compilando HTML...", event.Name)
-						err := w.BuildHTML()
+						err := action.BuildHTML()
 						if err != nil {
 							log.Println(err)
 						} else {
-							w.Reload()
+							log.Println(action.Reload())
 						}
 
 					case ".go":
 
 						if strings.Contains(event.Name, "wasm") {
 							fmt.Println("Compilando WASM...", event.Name)
-							err := w.BuildWASM()
+							err := action.BuildWASM()
 							if err != nil {
 								log.Println(err)
 							} else {
-								w.Reload()
+								log.Println(action.Reload())
 							}
 						} else {
-
-							err := w.Restart()
+							fmt.Println("Reiniciando APP...", event.Name)
+							err := action.Restart()
 							if err != nil {
 								log.Println("Restart error: ", err)
 							}
