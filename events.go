@@ -1,12 +1,11 @@
 package watch_files
 
 import (
-	"fmt"
-	"log"
 	"path/filepath"
 	"strings"
 	"time"
 
+	. "github.com/cdvelop/output"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -33,64 +32,78 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 
 					switch extension {
 					case ".css":
-						fmt.Println("Compilando CSS...", event.Name)
+						PrintWarning("Compilando CSS..." + event.Name + "\n")
 						err := action.BuildCSS()
 						if err != nil {
-							log.Println(err)
+							PrintError(err.Error())
 						} else {
-							log.Println(action.Reload())
+							err := action.Reload()
+							if err != nil {
+								PrintError(err.Error())
+							}
 						}
 					case ".js":
-						fmt.Println("Compilando JS...", event.Name)
+						PrintWarning("Compilando JS..." + event.Name + "\n")
 						err := action.BuildJS()
 						if err != nil {
-							log.Println(err)
+							PrintError(err.Error())
 						} else {
-							log.Println(action.Reload())
+							err := action.Reload()
+							if err != nil {
+								PrintError(err.Error())
+							}
 						}
 
 					case ".html":
-						fmt.Println("Compilando HTML...", event.Name)
+						PrintWarning("Compilando HTML..." + event.Name + "\n")
 						err := action.BuildHTML()
 						if err != nil {
-							log.Println(err)
+							PrintError(err.Error())
 						} else {
-							log.Println(action.Reload())
+							err := action.Reload()
+							if err != nil {
+								PrintError(err.Error())
+							}
 						}
 
 					case ".go":
 
 						if strings.Contains(event.Name, "wasm") {
-							fmt.Println("Compilando WASM...", event.Name)
+							PrintWarning("Compilando WASM..." + event.Name + "\n")
 							err := action.BuildWASM()
 							if err != nil {
-								log.Println(err)
+								PrintError(err.Error())
 							} else {
-								log.Println(action.Reload())
+
+								err := action.Reload()
+								if err != nil {
+									PrintError(err.Error())
+								}
+
 							}
 						} else {
-							fmt.Println("Reiniciando APP...", event.Name)
+							PrintWarning("Reiniciando APP..." + event.Name + "\n")
 							err := action.Restart()
 							if err != nil {
-								log.Println("Restart error: ", err)
+								PrintError(err.Error())
+							} else {
+
+								err := action.Reload()
+								if err != nil {
+									PrintError(err.Error())
+								}
 							}
-
-							// showMessage("restart_app")
-							// time.Sleep(10 * time.Millisecond)
-							// os.Exit(0)
-
 						}
 
 					}
 				}
-
 			}
 
 		case err, ok := <-watcher.Errors:
 			if !ok {
 				return
 			}
-			fmt.Println("Error:", err)
+			PrintError(err.Error())
 		}
 	}
 

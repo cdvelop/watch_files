@@ -1,20 +1,20 @@
 package watch_files
 
-import "github.com/cdvelop/gotools"
+import . "github.com/cdvelop/output"
 
 var action app
 
 func Add(com compilerAPP, rel reloadAPP, res restartAPP, directories_to_watch map[string]struct{}) *WatchFiles {
 
 	if com == nil {
-		gotools.ShowErrorAndExit("error compilador nulo")
+		ShowErrorAndExit("error compilador nulo")
 	}
 	if rel == nil {
-		gotools.ShowErrorAndExit("error Manejador app reload nulo")
+		ShowErrorAndExit("error Manejador app reload nulo")
 	}
 
 	if res == nil {
-		gotools.ShowErrorAndExit("error Manejador app restart nulo")
+		ShowErrorAndExit("error Manejador app restart nulo")
 	}
 
 	action = app{
