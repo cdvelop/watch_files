@@ -68,7 +68,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 
 					case ".go":
 
-						if strings.Contains(event.Name, "wasm") {
+						if strings.Contains(event.Name, "wasm") || strings.Contains(event.Name, "\\dom\\") {
 							PrintWarning("Compilando WASM..." + event.Name + "\n")
 							err := action.BuildWASM()
 							if err != nil {
