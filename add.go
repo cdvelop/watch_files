@@ -4,7 +4,7 @@ import . "github.com/cdvelop/output"
 
 var action app
 
-func Add(com compilerAPP, rel reloadAPP, res restartAPP, directories_to_watch map[string]struct{}) *WatchFiles {
+func Add(com compilerAPP, rel reloadAPP, res restartAPP, directories_to_watch map[string]struct{}, rebuild_when_dir_contains ...string) *WatchFiles {
 
 	if com == nil {
 		ShowErrorAndExit("error compilador nulo")

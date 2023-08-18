@@ -2,7 +2,6 @@ package watch_files
 
 import (
 	"path/filepath"
-	"strings"
 	"time"
 
 	. "github.com/cdvelop/output"
@@ -20,6 +19,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 			}
 
 			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 3*time.Second {
+				var err error
 				// Registrar la última acción y procesar el evento.
 				last_actions[event.Name] = time.Now()
 
@@ -32,71 +32,43 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 
 					switch extension {
 					case ".css":
-						PrintWarning("Compilando CSS..." + event.Name + "\n")
-						err := action.BuildCSS()
+						err = action.BuildCSS(event.Name)
 						if err != nil {
 							PrintError(err.Error())
-						} else {
-							err := action.Reload()
-							if err != nil {
-								PrintError(err.Error())
-							}
 						}
+						reload(err)
+
 					case ".js":
-						PrintWarning("Compilando JS..." + event.Name + "\n")
-						err := action.BuildJS()
+						err = action.BuildJS(event.Name)
 						if err != nil {
 							PrintError(err.Error())
-						} else {
-							err := action.Reload()
-							if err != nil {
-								PrintError(err.Error())
-							}
 						}
+						reload(err)
 
 					case ".html":
-						PrintWarning("Compilando HTML..." + event.Name + "\n")
-						err := action.BuildHTML()
+						err = action.BuildHTML(event.Name)
 						if err != nil {
 							PrintError(err.Error())
-						} else {
-							err := action.Reload()
-							if err != nil {
-								PrintError(err.Error())
-							}
 						}
+						reload(err)
 
 					case ".go":
 
-						if strings.Contains(event.Name, "wasm") || strings.Contains(event.Name, "\\dom\\") {
-							PrintWarning("Compilando WASM..." + event.Name + "\n")
-							err := action.BuildWASM()
-							if err != nil {
-								PrintError(err.Error())
-							} else {
-
-								err := action.Reload()
-								if err != nil {
-									PrintError(err.Error())
-								}
-
-							}
+						err = action.BuildWASM(event.Name)
+						if err != nil {
+							PrintError(err.Error())
 						} else {
-							PrintWarning("Reiniciando APP..." + event.Name + "\n")
-							err := action.Restart()
+
+							err = action.Restart(event.Name)
 							if err != nil {
 								PrintError(err.Error())
-							} else {
-
-								err := action.Reload()
-								if err != nil {
-									PrintError(err.Error())
-								}
 							}
 						}
 
+						reload(err)
 					}
 				}
+
 			}
 
 		case err, ok := <-watcher.Errors:
@@ -107,4 +79,13 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 		}
 	}
 
+}
+
+func reload(err error) {
+	if err == nil {
+		err := action.Reload()
+		if err != nil {
+			PrintError(err.Error())
+		}
+	}
 }
