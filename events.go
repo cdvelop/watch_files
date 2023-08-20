@@ -20,8 +20,6 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 
 			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 3*time.Second {
 				var err error
-				// Registrar la última acción y procesar el evento.
-				last_actions[event.Name] = time.Now()
 
 				if isDir(event.Name) {
 					// fmt.Println("Folder Event:", event.Name)
@@ -68,6 +66,9 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 						reload(err)
 					}
 				}
+
+				// Registrar la última acción y procesar el evento.
+				last_actions[event.Name] = time.Now()
 
 			}
 
