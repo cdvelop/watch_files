@@ -9,8 +9,15 @@ import (
 )
 
 func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
-	// defer wg.Done()
 	last_actions := make(map[string]time.Time)
+	reloadTimer := time.NewTimer(0)
+	reloadTimer.Stop()
+
+	restarTimer := time.NewTimer(0)
+	restarTimer.Stop()
+
+	var wait = 50 * time.Millisecond
+
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -18,8 +25,11 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 				return
 			}
 
-			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 3*time.Second {
+			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 1*time.Second {
 				var err error
+
+				// Restablece el temporizador de recarga
+				reloadTimer.Stop()
 
 				if isDir(event.Name) {
 					// fmt.Println("Folder Event:", event.Name)
@@ -31,43 +41,32 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 					switch extension {
 					case ".css":
 						err = action.BuildCSS(event.Name)
-						if err != nil {
-							PrintError(err.Error())
+						if err == nil {
+							reloadTimer.Reset(wait)
 						}
-						reload(err)
-
 					case ".js":
 						err = action.BuildJS(event.Name)
-						if err != nil {
-							PrintError(err.Error())
+						if err == nil {
+							reloadTimer.Reset(wait)
 						}
-						reload(err)
-
 					case ".html":
 						err = action.BuildHTML(event.Name)
-						if err != nil {
-							PrintError(err.Error())
+						if err == nil {
+							reloadTimer.Reset(wait)
 						}
-						reload(err)
 
 					case ".go":
+						restarTimer.Stop()
+						restarTimer.Reset(wait)
 
-						err = action.BuildWASM(event.Name)
-						if err != nil {
-							PrintError(err.Error())
-						} else {
+					}
 
-							err = action.Restart(event.Name)
-							if err != nil {
-								PrintError(err.Error())
-							}
-						}
-
-						reload(err)
+					if err != nil {
+						PrintError(err.Error())
 					}
 				}
 
-				// Registrar la última acción y procesar el evento.
+				// Registrar la última acción
 				last_actions[event.Name] = time.Now()
 
 			}
@@ -77,16 +76,28 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 				return
 			}
 			PrintError(err.Error())
+
+		case <-restarTimer.C:
+
+			err := action.BuildWASM(time.Now().Format("15:04:05"))
+			if err == nil {
+				err = action.Restart(time.Now().Format("15:04:05"))
+				if err == nil {
+					reload()
+				}
+			}
+
+		case <-reloadTimer.C:
+			// El temporizador de recarga ha expirado, ejecuta reload()
+			reload()
+
 		}
 	}
-
 }
 
-func reload(err error) {
-	if err == nil {
-		err := action.Reload()
-		if err != nil {
-			PrintError(err.Error())
-		}
+func reload() {
+	err := action.Reload()
+	if err != nil {
+		PrintError(err.Error())
 	}
 }
