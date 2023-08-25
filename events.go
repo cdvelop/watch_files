@@ -87,6 +87,10 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 				}
 			}
 
+			if err != nil {
+				PrintError(err.Error())
+			}
+
 		case <-reloadTimer.C:
 			// El temporizador de recarga ha expirado, ejecuta reload()
 			reload()
