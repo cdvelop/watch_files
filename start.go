@@ -32,8 +32,9 @@ func (w WatchFiles) DevFileWatcherSTART(wg *sync.WaitGroup) {
 					watcher.Add(path)
 
 					reg[path] = struct{}{}
+
+					// fmt.Println("** NEW PATH:", path)
 				}
-				// fmt.Println(path)
 			}
 			return nil
 		})
