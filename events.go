@@ -26,7 +26,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 			}
 
 			if last_time, ok := last_actions[event.Name]; !ok || time.Since(last_time) > 1*time.Second {
-				var err error
+				var err string
 
 				// Restablece el temporizador de recarga
 				reloadTimer.Stop()
@@ -41,17 +41,17 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 					switch extension {
 					case ".css":
 						err = action.BuildCSS(event.Name)
-						if err == nil {
+						if err == "" {
 							reloadTimer.Reset(wait)
 						}
 					case ".js":
 						err = action.BuildJS(event.Name)
-						if err == nil {
+						if err == "" {
 							reloadTimer.Reset(wait)
 						}
 					case ".html":
 						err = action.BuildHTML(event.Name)
-						if err == nil {
+						if err == "" {
 							reloadTimer.Reset(wait)
 						}
 
@@ -61,8 +61,8 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 
 					}
 
-					if err != nil {
-						PrintError(err.Error())
+					if err != "" {
+						PrintError(err)
 					}
 				}
 
@@ -80,15 +80,15 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 		case <-restarTimer.C:
 
 			err := action.BuildWASM(time.Now().Format("15:04:05"))
-			if err == nil {
+			if err == "" {
 				err = action.Restart(time.Now().Format("15:04:05"))
-				if err == nil {
+				if err == "" {
 					reload()
 				}
 			}
 
-			if err != nil {
-				PrintError(err.Error())
+			if err != "" {
+				PrintError(err)
 			}
 
 		case <-reloadTimer.C:
@@ -101,7 +101,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 
 func reload() {
 	err := action.Reload()
-	if err != nil {
-		PrintError(err.Error())
+	if err != "" {
+		PrintError(err)
 	}
 }

@@ -11,16 +11,16 @@ type app struct {
 }
 
 type compilerAPP interface {
-	BuildHTML(event_name string) error
-	BuildCSS(event_name string) error
-	BuildJS(event_name string) error
-	BuildWASM(event_name string) error
+	BuildHTML(event_name string) (err string)
+	BuildCSS(event_name string) (err string)
+	BuildJS(event_name string) (err string)
+	BuildWASM(event_name string) (err string)
 }
 
 type reloadAPP interface {
-	Reload() error
+	Reload() (err string)
 }
 
 type restartAPP interface {
-	Restart(event_name string) error
+	Restart(event_name string) (err string)
 }
