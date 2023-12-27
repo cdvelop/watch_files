@@ -34,9 +34,9 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 				if isDir(event.Name) {
 					// fmt.Println("Folder Event:", event.Name)
 				} else {
-					// fmt.Println("File Event:", event.Name)
 
 					extension := filepath.Ext(event.Name)
+					// fmt.Println("extension:", extension, "File Event:", event.Name)
 
 					switch extension {
 					case ".css":
@@ -62,7 +62,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 					}
 
 					if err != "" {
-						PrintError(err)
+						PrintError("watch_files: " + err)
 					}
 				}
 
@@ -75,7 +75,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 			if !ok {
 				return
 			}
-			PrintError(err.Error())
+			PrintError("watcher.Errors: " + err.Error())
 
 		case <-restarTimer.C:
 
@@ -88,7 +88,7 @@ func (w WatchFiles) watchEvents(watcher *fsnotify.Watcher) {
 			}
 
 			if err != "" {
-				PrintError(err)
+				PrintError("restarTimer err: ", err)
 			}
 
 		case <-reloadTimer.C:
